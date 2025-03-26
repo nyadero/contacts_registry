@@ -37,13 +37,19 @@ public class ContactsResource {
         }
     }
 
-    // Get contacts by organization
-    @GET
-    @Path("/organization/{org}")
-    public Response getContactsByOrganization(@PathParam("org") String organization) {
-        List<Contact> contacts = contactDao.getContactsByOrganization(organization);
-        return Response.ok(contacts).build();
+   // Get contacts by organization
+@GET
+@Path("/organization")
+public Response getContactsByOrganization(@QueryParam("org") String organization) {
+    if (organization == null || organization.isEmpty()) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity("{\"error\": \"Organization parameter is required\"}")
+                .build();
     }
+   
+    List<Contact> contacts = contactDao.getContactsByOrganization(organization);
+    return Response.ok(contacts).build();
+}
 
     // Search contact by phone hash
     @GET
@@ -96,4 +102,17 @@ public class ContactsResource {
             return Response.status(Response.Status.NOT_FOUND).entity("Contact not found").build();
         }
     }
+    
+    // Search contacts using multiple filters
+@GET
+@Path("/search")
+public Response searchContacts(
+        @QueryParam("phoneHash") String phoneHash,
+        @QueryParam("maskedName") String maskedName,
+        @QueryParam("maskedPhone") String maskedPhone,
+        @QueryParam("organization") String organization) {
+
+    List<Contact> contacts = contactDao.searchContacts(phoneHash, maskedName, maskedPhone, organization);
+    return Response.ok(contacts).build();
+}
 }

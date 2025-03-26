@@ -20,7 +20,7 @@ public class ContactDao {
     private static final String SELECT_CONTACT_BY_ID = "SELECT * FROM contacts WHERE id = ?;";
     private static final String DELETE_CONTACT_SQL = "DELETE FROM contacts WHERE id = ?;";
     private static final String UPDATE_CONTACT_SQL = "UPDATE contacts SET full_name=?, phone_number=?, email=?, id_number=?, date_of_birth=?, gender=?, organization=?, masked_name=?, masked_phone_number=?, hashed_phone_number=? WHERE id=?;";
-    private static final String SELECT_CONTACTS_BY_ORGANIZATION = "SELECT full_name, masked_phone_number FROM contacts WHERE organization = ?;";
+    private static final String SELECT_CONTACTS_BY_ORGANIZATION = "SELECT * FROM contacts WHERE LOWER(organization) = LOWER(?)";
     private static final String SELECT_CONTACT_BY_HASH = "SELECT * FROM contacts WHERE hashed_phone_number = ?;";
     private static final String SELECT_CONTACT_BY_MASKED_DETAILS = "SELECT * FROM contacts WHERE masked_name = ? AND masked_phone_number = ?;";
 
@@ -155,10 +155,20 @@ public class ContactDao {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Contact contact = new Contact();
-                contact.setFullName(rs.getString("full_name"));
-                contact.setMaskedPhoneNumber(rs.getString("masked_phone_number"));
-                contacts.add(contact);
+                contacts.add(
+                    new Contact(
+                    rs.getInt("id"),
+                    rs.getString("full_name"),
+                    rs.getString("phone_number"),
+                    rs.getString("email"),
+                    rs.getString("id_number"),
+                    rs.getString("date_of_birth"),
+                    rs.getString("gender"),
+                    rs.getString("organization"),
+                    rs.getString("masked_name"),
+                    rs.getString("masked_phone_number"),
+                    rs.getString("hashed_phone_number")
+                ));
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -223,4 +233,64 @@ public class ContactDao {
         return contact;
     }
     
+    public List<Contact> searchContacts(String phoneHash, String maskedName, String maskedPhone, String organization) {
+    List<Contact> contacts = new ArrayList<>();
+    String query = "SELECT * FROM contacts WHERE 1=1";
+
+    List<String> conditions = new ArrayList<>();
+    List<String> values = new ArrayList<>();
+
+    if (phoneHash != null && !phoneHash.isEmpty()) {
+        conditions.add("hashed_phone_number = ?");
+        values.add(phoneHash);
+    }
+
+    if (maskedName != null && !maskedName.isEmpty()) {
+        conditions.add("masked_name = ?");
+        values.add(maskedName);
+    }
+    
+    if(maskedPhone != null && !maskedPhone.isEmpty()){
+                conditions.add("masked_phone_number = ?");
+        values.add(maskedPhone);
+    }
+
+    if (organization != null && !organization.isEmpty()) {
+        conditions.add("LOWER(organization) = LOWER(?)");
+        values.add(organization);
+    }
+
+    if (!conditions.isEmpty()) {
+        query += " AND " + String.join(" AND ", conditions);
+    }
+
+    try (Connection conn = DbUtil.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        for (int i = 0; i < values.size(); i++) {
+            stmt.setString(i + 1, values.get(i));
+        }
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            contacts.add(new Contact(
+                rs.getInt("id"),
+                rs.getString("full_name"),
+                rs.getString("phone_number"),
+                rs.getString("email"),
+                rs.getString("id_number"),
+                rs.getString("date_of_birth"),
+                rs.getString("gender"),
+                rs.getString("organization"),
+                rs.getString("masked_name"),
+                rs.getString("masked_phone_number"),
+                rs.getString("hashed_phone_number")
+            ));
+        }
+    } catch (SQLException | ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+    return contacts;
+}
+
 }

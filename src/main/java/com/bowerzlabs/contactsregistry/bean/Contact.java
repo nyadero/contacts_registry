@@ -122,7 +122,6 @@ public class Contact {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-        this.maskedName = generateMaskedName(fullName);
     }
 
     public String getPhoneNumber() {
@@ -131,8 +130,14 @@ public class Contact {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-        this.maskedPhoneNumber = generateMaskedPhoneNumber(phoneNumber);
-        this.hashedPhoneNumber = hashPhoneNumber(phoneNumber);
+    }
+
+    public void setMaskedName(String maskedName) {
+        this.maskedName = maskedName;
+    }
+
+    public void setHashedPhoneNumber(String hashedPhoneNumber) {
+        this.hashedPhoneNumber = hashedPhoneNumber;
     }
 
     public String getEmail() {
