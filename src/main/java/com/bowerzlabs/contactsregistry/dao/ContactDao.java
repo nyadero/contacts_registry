@@ -21,6 +21,8 @@ public class ContactDao {
     private static final String DELETE_CONTACT_SQL = "DELETE FROM contacts WHERE id = ?;";
     private static final String UPDATE_CONTACT_SQL = "UPDATE contacts SET full_name=?, phone_number=?, email=?, id_number=?, date_of_birth=?, gender=?, organization=?, masked_name=?, masked_phone_number=?, hashed_phone_number=? WHERE id=?;";
     private static final String SELECT_CONTACTS_BY_ORGANIZATION = "SELECT full_name, masked_phone_number FROM contacts WHERE organization = ?;";
+    private static final String SELECT_CONTACT_BY_HASH = "SELECT * FROM contacts WHERE hashed_phone_number = ?;";
+    private static final String SELECT_CONTACT_BY_MASKED_DETAILS = "SELECT * FROM contacts WHERE masked_name = ? AND masked_phone_number = ?;";
 
     public ContactDao() {}
 
@@ -155,7 +157,7 @@ public class ContactDao {
             while (rs.next()) {
                 Contact contact = new Contact();
                 contact.setFullName(rs.getString("full_name"));
-//                contact.setMaskedPhoneNumber(rs.getString("masked_phone_number"));
+                contact.setMaskedPhoneNumber(rs.getString("masked_phone_number"));
                 contacts.add(contact);
             }
         } catch (SQLException | ClassNotFoundException e) {
