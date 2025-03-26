@@ -163,4 +163,62 @@ public class ContactDao {
         }
         return contacts;
     }
+    
+     // Search contact by hashed phone number
+    public Contact searchByPhoneHash(String phoneHash) {
+        Contact contact = null;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_CONTACT_BY_HASH)) {
+            stmt.setString(1, phoneHash);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                contact = new Contact(
+                    rs.getInt("id"),
+                    rs.getString("full_name"),
+                    rs.getString("phone_number"),
+                    rs.getString("email"),
+                    rs.getString("id_number"),
+                    rs.getString("date_of_birth"),
+                    rs.getString("gender"),
+                    rs.getString("organization"),
+                    rs.getString("masked_name"),
+                    rs.getString("masked_phone_number"),
+                    rs.getString("hashed_phone_number")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return contact;
+    }
+
+    // Search contact by masked name and masked phone number
+    public Contact searchByMaskedDetails(String maskedName, String maskedPhone) {
+        Contact contact = null;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_CONTACT_BY_MASKED_DETAILS)) {
+            stmt.setString(1, maskedName);
+            stmt.setString(2, maskedPhone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                contact = new Contact(
+                    rs.getInt("id"),
+                    rs.getString("full_name"),
+                    rs.getString("phone_number"),
+                    rs.getString("email"),
+                    rs.getString("id_number"),
+                    rs.getString("date_of_birth"),
+                    rs.getString("gender"),
+                    rs.getString("organization"),
+                    rs.getString("masked_name"),
+                    rs.getString("masked_phone_number"),
+                    rs.getString("hashed_phone_number")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return contact;
+    }
+    
 }
