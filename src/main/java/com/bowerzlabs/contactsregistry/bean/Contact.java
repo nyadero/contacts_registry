@@ -191,5 +191,7 @@ public class Contact {
     public String toString() {
         return "Contact{" + "id=" + id + ", fullName=" + fullName + ", phoneNumber=" + phoneNumber + ", email=" + email + ", idNumber=" + idNumber + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", organization=" + organization + ", maskedName=" + maskedName + ", maskedPhoneNumber=" + maskedPhoneNumber + ", hashedPhoneNumber=" + hashedPhoneNumber + '}';
     }
-    
+
+    public void setMaskedPhoneNumber(String maskedPhoneNumber) {
+    }
 }
