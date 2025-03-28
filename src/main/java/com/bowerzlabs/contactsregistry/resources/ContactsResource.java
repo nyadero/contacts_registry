@@ -37,19 +37,19 @@ public class ContactsResource {
         }
     }
 
-   // Get contacts by organization
-@GET
-@Path("/organization")
-public Response getContactsByOrganization(@QueryParam("org") String organization) {
-    if (organization == null || organization.isEmpty()) {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity("{\"error\": \"Organization parameter is required\"}")
-                .build();
+    // Get contacts by organization
+    @GET
+    @Path("/organization")
+    public Response getContactsByOrganization(@QueryParam("org") String organization) {
+        if (organization == null || organization.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"Organization parameter is required\"}")
+                    .build();
+        }
+
+        List<Contact> contacts = contactDao.getContactsByOrganization(organization);
+        return Response.ok(contacts).build();
     }
-   
-    List<Contact> contacts = contactDao.getContactsByOrganization(organization);
-    return Response.ok(contacts).build();
-}
 
     // Search contact by phone hash
     @GET
@@ -74,7 +74,9 @@ public Response getContactsByOrganization(@QueryParam("org") String organization
     // Add a new contact
     @POST
     public Response addContact(Contact contact) {
-        contactDao.saveContact(contact);
+        Contact contact1 = new Contact(contact.getFullName(), contact.getPhoneNumber(), contact.getEmail(), contact.getIdNumber(), contact.getDateOfBirth(), contact.getGender(),
+                contact.getOrganization());
+        contactDao.saveContact(contact1);
         return Response.status(Response.Status.CREATED).entity("Contact added successfully").build();
     }
 
@@ -102,17 +104,17 @@ public Response getContactsByOrganization(@QueryParam("org") String organization
             return Response.status(Response.Status.NOT_FOUND).entity("Contact not found").build();
         }
     }
-    
-    // Search contacts using multiple filters
-@GET
-@Path("/search")
-public Response searchContacts(
-        @QueryParam("phoneHash") String phoneHash,
-        @QueryParam("maskedName") String maskedName,
-        @QueryParam("maskedPhone") String maskedPhone,
-        @QueryParam("organization") String organization) {
 
-    List<Contact> contacts = contactDao.searchContacts(phoneHash, maskedName, maskedPhone, organization);
-    return Response.ok(contacts).build();
-}
+    // Search contacts using multiple filters
+    @GET
+    @Path("/search")
+    public Response searchContacts(
+            @QueryParam("phoneHash") String phoneHash,
+            @QueryParam("maskedName") String maskedName,
+            @QueryParam("maskedPhone") String maskedPhone,
+            @QueryParam("organization") String organization) {
+
+        List<Contact> contacts = contactDao.searchContacts(phoneHash, maskedName, maskedPhone, organization);
+        return Response.ok(contacts).build();
+    }
 }
