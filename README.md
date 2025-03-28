@@ -1,4 +1,4 @@
-# Contact Registry API
+7# Contact Registry API
 
 ## Overview
 This project provides a SOAP and RESTful API for managing a contact registry. Users can query contacts based on phone number, masked details, or organization name. The API is designed to support integration with external applications.
@@ -84,6 +84,5 @@ VALUES
 - Use JavaScript to make AJAX requests to the REST API and display data in a table.
 - Ensure the correct `Content-Type` headers (`application/json`).
 
----
-**Author:** BowerzLabs
+
 
