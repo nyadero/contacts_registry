@@ -85,6 +85,10 @@ public class ContactsResource {
     @Path("/{id}")
     public Response updateContact(@PathParam("id") int id, Contact contact) {
         contact.setId(id);
+        // Recalculate masked and hashed values
+        contact.setMaskedName(contact.generateMaskedName(contact.getFullName()));
+        contact.setMaskedPhoneNumber(contact.generateMaskedPhoneNumber(contact.getPhoneNumber()));
+        contact.setHashedPhoneNumber(contact.hashPhoneNumber(contact.getPhoneNumber()));
         boolean updated = contactDao.updateContact(contact);
         if (updated) {
             return Response.ok("Contact updated successfully").build();
