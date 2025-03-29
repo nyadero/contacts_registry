@@ -37,40 +37,6 @@ public class ContactsResource {
         }
     }
 
-    // Get contacts by organization
-    @GET
-    @Path("/organization")
-    public Response getContactsByOrganization(@QueryParam("org") String organization) {
-        if (organization == null || organization.isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"Organization parameter is required\"}")
-                    .build();
-        }
-
-        List<Contact> contacts = contactDao.getContactsByOrganization(organization);
-        return Response.ok(contacts).build();
-    }
-
-    // Search contact by phone hash
-    @GET
-    @Path("/search/phone-hash/{hash}")
-    public Response getContactByPhoneHash(@PathParam("hash") String phoneHash) {
-        Contact contact = contactDao.searchByPhoneHash(phoneHash);
-        if (contact != null) {
-            return Response.ok(contact).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Contact not found").build();
-        }
-    }
-
-    // Search by masked name and phone number
-    @GET
-    @Path("/search/masked")
-    public Response searchByMaskedNameAndPhone(@QueryParam("maskedName") String maskedName, @QueryParam("maskedPhone") String maskedPhone) {
-        Contact contact = contactDao.searchByMaskedDetails(maskedName, maskedPhone);
-        return Response.ok(contact).build();
-    }
-
     // Add a new contact
     @POST
     public Response addContact(Contact contact) {
