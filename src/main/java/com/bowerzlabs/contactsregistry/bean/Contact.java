@@ -73,7 +73,7 @@ public class Contact {
     }
 
     
-    private String generateMaskedName(String fullName) {
+    public String generateMaskedName(String fullName) {
         String[] parts = fullName.split(" ");
         if (parts.length > 1) {
             return parts[0] + " " + parts[1].charAt(0) + ".";
@@ -81,14 +81,14 @@ public class Contact {
         return fullName;
     }
 
-    private String generateMaskedPhoneNumber(String phoneNumber) {
+    public String generateMaskedPhoneNumber(String phoneNumber) {
         if (phoneNumber.length() >= 6) {
             return phoneNumber.substring(0, 6) + "***";
         }
         return phoneNumber;
     }
 
-    private String hashPhoneNumber(String phoneNumber) {
+    public String hashPhoneNumber(String phoneNumber) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(phoneNumber.getBytes());
@@ -107,7 +107,6 @@ public class Contact {
     }
 
     // Getters and setters
-
     public int getId() {
         return id;
     }
